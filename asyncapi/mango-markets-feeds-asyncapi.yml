@@ -1,0 +1,572 @@
+asyncapi: '2.6.0'
+info:
+  title: Mango Markets v4 Feeds API
+  version: '1.0.0'
+  description: >-
+    AsyncAPI definition for the two public Mango Markets v4 WebSocket feed
+    services operated by Blockworks Foundation: the Fills Feed
+    (service-mango-fills) and the Orderbook Feed (service-mango-orderbook).
+    Both services consume gRPC streams from a Solana validator running the
+    mango-feeds geyser plugin and expose lowest-latency, bandwidth-conserving
+    JSON over WebSocket for Mango V4 Perp markets and Openbook spot markets.
+    Channels, command shapes, and message payloads are sourced from the
+    service-mango-fills/README.md, service-mango-orderbook/README.md, and the
+    TypeScript client (mango-feeds/ts/client/src/fills.ts and orderbook.ts).
+  contact:
+    name: Blockworks Foundation
+    url: https://blockworks.foundation
+  license:
+    name: AGPL-3.0
+    url: https://github.com/blockworks-foundation/mango-feeds/blob/lou/l3-feed/LICENSE
+  externalDocs:
+    description: mango-feeds repository
+    url: https://github.com/blockworks-foundation/mango-feeds
+
+defaultContentType: application/json
+
+servers:
+  fills:
+    url: fills.mngo.cloud
+    protocol: wss
+    description: >-
+      Public Mango v4 Fills Feed WebSocket server (service-mango-fills).
+      Public API entrypoint: https://api.mngo.cloud/fills/v1/
+  orderbook:
+    url: orderbook.mngo.cloud
+    protocol: wss
+    description: >-
+      Public Mango v4 Orderbook Feed WebSocket server (service-mango-orderbook).
+      Public API entrypoint: https://api.mngo.cloud/orderbook/v1/
+
+channels:
+  /fills:
+    description: >-
+      Fills feed channel. Clients send command frames (getMarkets, subscribe,
+      unsubscribe) and receive market lists, subscription acks, fill events,
+      and (optionally) head updates for Mango V4 Perp and Openbook markets.
+    bindings:
+      ws:
+        bindingVersion: '0.1.0'
+    publish:
+      operationId: sendFillsCommand
+      summary: Send a command to the Fills Feed server
+      message:
+        oneOf:
+          - $ref: '#/components/messages/GetMarketsCommand'
+          - $ref: '#/components/messages/FillsSubscribeCommand'
+          - $ref: '#/components/messages/FillsUnsubscribeCommand'
+    subscribe:
+      operationId: receiveFillsEvents
+      summary: Receive fill events and control responses from the Fills Feed
+      message:
+        oneOf:
+          - $ref: '#/components/messages/MarketsList'
+          - $ref: '#/components/messages/SubscriptionAck'
+          - $ref: '#/components/messages/FillEventUpdate'
+          - $ref: '#/components/messages/HeadUpdate'
+
+  /orderbook:
+    description: >-
+      Orderbook feed channel. Clients send command frames (getMarkets,
+      subscribe with subscriptionType=level or book, unsubscribe) and receive
+      L2 / L3 checkpoints and per-side delta updates for Mango V4 Perp and
+      Openbook spot markets.
+    bindings:
+      ws:
+        bindingVersion: '0.1.0'
+    publish:
+      operationId: sendOrderbookCommand
+      summary: Send a command to the Orderbook Feed server
+      message:
+        oneOf:
+          - $ref: '#/components/messages/GetMarketsCommand'
+          - $ref: '#/components/messages/OrderbookSubscribeCommand'
+          - $ref: '#/components/messages/OrderbookUnsubscribeCommand'
+    subscribe:
+      operationId: receiveOrderbookEvents
+      summary: Receive orderbook checkpoints and updates from the Orderbook Feed
+      message:
+        oneOf:
+          - $ref: '#/components/messages/MarketsList'
+          - $ref: '#/components/messages/SubscriptionAck'
+          - $ref: '#/components/messages/OrderbookL2Checkpoint'
+          - $ref: '#/components/messages/OrderbookL2Update'
+          - $ref: '#/components/messages/OrderbookL3Checkpoint'
+          - $ref: '#/components/messages/OrderbookL3Update'
+
+components:
+  messages:
+    GetMarketsCommand:
+      name: getMarkets
+      title: Get Markets Command
+      summary: Request the list of markets the server currently supports.
+      payload:
+        $ref: '#/components/schemas/GetMarketsCommand'
+
+    FillsSubscribeCommand:
+      name: fillsSubscribe
+      title: Fills Subscribe Command
+      summary: >-
+        Subscribe to fill events. Per the service-mango-fills README a client
+        can subscribe by marketIds or by Mango account. The TypeScript client
+        additionally documents marketId, accountIds, and a headUpdates flag.
+      payload:
+        $ref: '#/components/schemas/FillsSubscribeCommand'
+
+    FillsUnsubscribeCommand:
+      name: fillsUnsubscribe
+      title: Fills Unsubscribe Command
+      summary: Unsubscribe from fill events for a given marketId.
+      payload:
+        $ref: '#/components/schemas/UnsubscribeCommand'
+
+    OrderbookSubscribeCommand:
+      name: orderbookSubscribe
+      title: Orderbook Subscribe Command
+      summary: >-
+        Subscribe to orderbook updates for a market. subscriptionType=level
+        yields L2 checkpoint plus per-side L2 deltas; subscriptionType=book
+        yields L3 checkpoint plus per-side L3 additions/removals.
+      payload:
+        $ref: '#/components/schemas/OrderbookSubscribeCommand'
+
+    OrderbookUnsubscribeCommand:
+      name: orderbookUnsubscribe
+      title: Orderbook Unsubscribe Command
+      summary: Unsubscribe from orderbook updates for a given marketId.
+      payload:
+        $ref: '#/components/schemas/UnsubscribeCommand'
+
+    MarketsList:
+      name: marketsList
+      title: Markets List Response
+      summary: >-
+        Map of market pubkey -> market name returned in response to
+        getMarkets.
+      payload:
+        $ref: '#/components/schemas/MarketsList'
+
+    SubscriptionAck:
+      name: subscriptionAck
+      title: Subscription Acknowledgement
+      summary: Server acknowledgement of a subscribe/unsubscribe command.
+      payload:
+        $ref: '#/components/schemas/SubscriptionAck'
+
+    FillEventUpdate:
+      name: fillEventUpdate
+      title: Fill Event Update
+      summary: >-
+        Individual fill event for a Mango V4 Perp or Openbook market. status
+        is 'new' for confirmed fills and 'revoke' when a fill that previously
+        occurred on a fork is rolled back.
+      payload:
+        $ref: '#/components/schemas/FillEventUpdate'
+
+    HeadUpdate:
+      name: headUpdate
+      title: Head Update
+      summary: >-
+        Event-queue head pointer update, emitted when the client subscribed
+        with headUpdates=true.
+      payload:
+        $ref: '#/components/schemas/HeadUpdate'
+
+    OrderbookL2Checkpoint:
+      name: orderbookL2Checkpoint
+      title: Orderbook L2 Checkpoint
+      summary: >-
+        Initial L2 snapshot delivered immediately after an L2 subscription is
+        accepted. Contains both sides of the book as [price, quantity] pairs.
+      payload:
+        $ref: '#/components/schemas/OrderbookL2Checkpoint'
+
+    OrderbookL2Update:
+      name: orderbookL2Update
+      title: Orderbook L2 Update
+      summary: >-
+        Per-side L2 delta. Each entry in `update` is [price, quantity] where
+        a quantity of 0 indicates a level removal.
+      payload:
+        $ref: '#/components/schemas/OrderbookL2Update'
+
+    OrderbookL3Checkpoint:
+      name: orderbookL3Checkpoint
+      title: Orderbook L3 Checkpoint
+      summary: >-
+        Initial L3 snapshot delivered immediately after an L3 subscription is
+        accepted. ownerPubkey is a Mango account for perp markets and an open
+        orders account for spot markets.
+      payload:
+        $ref: '#/components/schemas/OrderbookL3Checkpoint'
+
+    OrderbookL3Update:
+      name: orderbookL3Update
+      title: Orderbook L3 Update
+      summary: >-
+        Per-side L3 delta containing arrays of added and removed orders for a
+        single side of the book.
+      payload:
+        $ref: '#/components/schemas/OrderbookL3Update'
+
+  schemas:
+    GetMarketsCommand:
+      type: object
+      required:
+        - command
+      properties:
+        command:
+          type: string
+          const: getMarkets
+
+    FillsSubscribeCommand:
+      type: object
+      required:
+        - command
+      properties:
+        command:
+          type: string
+          const: subscribe
+        marketId:
+          type: string
+          description: Single market pubkey to subscribe to.
+        marketIds:
+          type: array
+          description: List of market pubkeys to subscribe to.
+          items:
+            type: string
+        account:
+          type: array
+          description: >-
+            Mango account pubkey to subscribe to (per service README example).
+          items:
+            type: string
+        accountIds:
+          type: array
+          description: >-
+            List of Mango account pubkeys to subscribe to (per TypeScript
+            client FillsFeedSubscribeParams).
+          items:
+            type: string
+        headUpdates:
+          type: boolean
+          description: >-
+            When true the server will additionally emit HeadUpdate frames as
+            the event queue head advances.
+
+    OrderbookSubscribeCommand:
+      type: object
+      required:
+        - command
+        - marketId
+        - subscriptionType
+      properties:
+        command:
+          type: string
+          const: subscribe
+        marketId:
+          type: string
+          description: Market pubkey to subscribe to.
+        marketIds:
+          type: array
+          description: Multiple market pubkeys (per TypeScript client).
+          items:
+            type: string
+        subscriptionType:
+          type: string
+          enum:
+            - level
+            - book
+          description: >-
+            level -> L2 checkpoint + L2 updates; book -> L3 checkpoint + L3
+            updates.
+
+    UnsubscribeCommand:
+      type: object
+      required:
+        - command
+        - marketId
+      properties:
+        command:
+          type: string
+          const: unsubscribe
+        marketId:
+          type: string
+
+    MarketsList:
+      type: object
+      description: Map of market pubkey -> market name.
+      additionalProperties:
+        type: string
+      example:
+        ESdnpnNLgTkBCZRuTJkZLi5wKEZ2z47SG3PJrhundSQ2: SOL-PERP
+        HwhVGkfsSQ9JSQeQYu2CbkRCLvsh3qRZxG6m4oMVwZpN: BTC-PERP
+        Fgh9JSZ2qfSjCw9RPJ85W2xbihsp2muLvfRztzoVR7f1: ETH-PERP
+
+    SubscriptionAck:
+      type: object
+      required:
+        - success
+        - message
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+
+    FillEventUpdate:
+      type: object
+      required:
+        - event
+        - marketKey
+        - marketName
+        - status
+        - slot
+        - writeVersion
+      properties:
+        event:
+          $ref: '#/components/schemas/FillEvent'
+        marketKey:
+          type: string
+          description: Market pubkey.
+        marketName:
+          type: string
+        status:
+          type: string
+          enum:
+            - new
+            - revoke
+        slot:
+          type: integer
+          format: int64
+        writeVersion:
+          type: integer
+          format: int64
+
+    FillEvent:
+      type: object
+      required:
+        - eventType
+        - maker
+        - taker
+        - takerSide
+        - timestamp
+        - seqNum
+        - makerClientOrderId
+        - takerClientOrderId
+        - makerFee
+        - takerFee
+        - price
+        - quantity
+      properties:
+        eventType:
+          type: string
+          enum:
+            - spot
+            - perp
+        maker:
+          type: string
+          description: Maker Mango account pubkey.
+        taker:
+          type: string
+          description: Taker Mango account pubkey.
+        takerSide:
+          type: string
+          enum:
+            - bid
+            - ask
+        timestamp:
+          type: string
+          format: date-time
+        seqNum:
+          type: integer
+          format: int64
+        makerClientOrderId:
+          type: integer
+          format: int64
+        takerClientOrderId:
+          type: integer
+          format: int64
+        makerFee:
+          type: number
+        takerFee:
+          type: number
+        price:
+          type: number
+        quantity:
+          type: number
+
+    HeadUpdate:
+      type: object
+      required:
+        - head
+        - previousHead
+        - headSeqNum
+        - previousHeadSeqNum
+        - status
+        - marketKey
+        - marketName
+        - slot
+        - writeVersion
+      properties:
+        head:
+          type: integer
+        previousHead:
+          type: integer
+        headSeqNum:
+          type: integer
+          format: int64
+        previousHeadSeqNum:
+          type: integer
+          format: int64
+        status:
+          type: string
+          enum:
+            - new
+            - revoke
+        marketKey:
+          type: string
+        marketName:
+          type: string
+        slot:
+          type: integer
+          format: int64
+        writeVersion:
+          type: integer
+          format: int64
+
+    PriceLevel:
+      type: array
+      description: '[price, quantity] tuple. quantity 0 indicates a level removal.'
+      minItems: 2
+      maxItems: 2
+      items:
+        type: number
+
+    Order:
+      type: object
+      required:
+        - price
+        - quantity
+        - ownerPubkey
+      properties:
+        price:
+          type: number
+        quantity:
+          type: number
+        ownerPubkey:
+          type: string
+          description: >-
+            For perp markets this is a Mango account pubkey; for spot markets
+            this is an open orders account pubkey.
+
+    OrderbookL2Checkpoint:
+      type: object
+      required:
+        - market
+        - bids
+        - asks
+        - slot
+        - write_version
+      properties:
+        market:
+          type: string
+        bids:
+          type: array
+          items:
+            $ref: '#/components/schemas/PriceLevel'
+        asks:
+          type: array
+          items:
+            $ref: '#/components/schemas/PriceLevel'
+        slot:
+          type: integer
+          format: int64
+        write_version:
+          type: integer
+          format: int64
+
+    OrderbookL2Update:
+      type: object
+      required:
+        - market
+        - side
+        - update
+        - slot
+        - write_version
+      properties:
+        market:
+          type: string
+        side:
+          type: string
+          enum:
+            - bid
+            - ask
+        update:
+          type: array
+          items:
+            $ref: '#/components/schemas/PriceLevel'
+        slot:
+          type: integer
+          format: int64
+        write_version:
+          type: integer
+          format: int64
+
+    OrderbookL3Checkpoint:
+      type: object
+      required:
+        - market
+        - bids
+        - asks
+        - slot
+        - write_version
+      properties:
+        market:
+          type: string
+        bids:
+          type: array
+          items:
+            $ref: '#/components/schemas/Order'
+        asks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Order'
+        slot:
+          type: integer
+          format: int64
+        write_version:
+          type: integer
+          format: int64
+
+    OrderbookL3Update:
+      type: object
+      required:
+        - market
+        - side
+        - additions
+        - removals
+        - slot
+        - write_version
+      properties:
+        market:
+          type: string
+        side:
+          type: string
+          enum:
+            - bid
+            - ask
+        additions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Order'
+        removals:
+          type: array
+          items:
+            $ref: '#/components/schemas/Order'
+        slot:
+          type: integer
+          format: int64
+        write_version:
+          type: integer
+          format: int64

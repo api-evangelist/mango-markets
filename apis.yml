@@ -1,0 +1,133 @@
+aid: mango-markets
+url: https://raw.githubusercontent.com/api-evangelist/mango-markets/refs/heads/main/apis.yml
+name: Mango Markets
+kind: company
+description: >-
+  Mango Markets is a decentralized derivatives exchange and money market
+  built on Solana, operated by the Blockworks Foundation. Mango v4 introduces
+  unified margin accounts that combine spot trading, perpetual futures, and
+  borrow/lend in a single risk engine, settled by the on-chain Mango v4
+  program. Beyond the on-chain program and the TypeScript client, the project
+  exposes low-latency public market-data feeds through the mango-feeds geyser
+  services - the Fills Feed (service-mango-fills, fills.mngo.cloud) and the
+  Orderbook Feed (service-mango-orderbook, orderbook.mngo.cloud) - which
+  stream fill events and L2/L3 orderbook state for Mango V4 Perp markets and
+  Openbook spot markets over WebSocket.
+accessModel:
+  pricing: unknown
+  onboarding: unknown
+  trial: false
+  try_now: false
+  public: false
+  label: Unknown
+  confidence: low
+  source: []
+  generated: '2026-07-22'
+  method: derived
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/mango-markets.png
+tags:
+  - Cryptocurrency
+  - DeFi
+  - Decentralized Exchange
+  - Perpetual Futures
+  - Spot
+  - Margin
+  - Orderbook
+  - Fills
+  - Market Data
+  - WebSocket
+  - Solana
+  - Mango v4
+created: '2026-05-30'
+modified: '2026-05-30'
+specificationVersion: '0.23'
+x-category: Cryptocurrency
+x-tier: 1
+x-type: company
+apis:
+  - aid: mango-markets:fills-feed
+    name: Mango v4 Fills Feed
+    description: >-
+      Low-latency WebSocket feed (service-mango-fills) that parses Mango V4
+      Perp and Openbook event queues and emits individual fill events as
+      they are processed by the validator. Supports getMarkets discovery,
+      subscribe / unsubscribe by marketIds or by Mango account, and an
+      optional headUpdates mode that emits event-queue head pointer updates.
+      Fill events that occurred on a fork are revoked via a status='revoke'
+      message.
+    humanURL: https://github.com/blockworks-foundation/mango-feeds/tree/lou/l3-feed/service-mango-fills
+    baseURL: wss://fills.mngo.cloud
+    tags:
+      - WebSocket
+      - Fills
+      - Market Data
+      - Perpetuals
+      - Spot
+      - Solana
+    properties:
+      - type: Documentation
+        url: https://github.com/blockworks-foundation/mango-feeds/blob/lou/l3-feed/service-mango-fills/README.md
+      - type: AsyncAPI
+        url: asyncapi/mango-markets-feeds-asyncapi.yml
+      - type: SourceCode
+        title: service-mango-fills (Rust)
+        url: https://github.com/blockworks-foundation/mango-feeds/tree/lou/l3-feed/service-mango-fills
+      - type: SDKs
+        title: '@blockworks-foundation/mango-feeds-client (TypeScript)'
+        url: https://github.com/blockworks-foundation/mango-feeds/tree/main/ts/client
+      - type: PublicAPI
+        title: Public Fills API entrypoint
+        url: https://api.mngo.cloud/fills/v1/
+  - aid: mango-markets:orderbook-feed
+    name: Mango v4 Orderbook Feed
+    description: >-
+      Low-latency WebSocket feed (service-mango-orderbook) that parses
+      Mango V4 Perp and Openbook spot bookside accounts and emits L2 (price /
+      quantity) and L3 (per-order) checkpoints and per-side delta updates.
+      Clients subscribe with subscriptionType=level for L2 or
+      subscriptionType=book for L3; the server returns an initial checkpoint
+      followed by streaming per-side updates with slot and writeVersion for
+      ordering.
+    humanURL: https://github.com/blockworks-foundation/mango-feeds/tree/lou/l3-feed/service-mango-orderbook
+    baseURL: wss://orderbook.mngo.cloud
+    tags:
+      - WebSocket
+      - Orderbook
+      - L2
+      - L3
+      - Market Data
+      - Perpetuals
+      - Spot
+      - Solana
+    properties:
+      - type: Documentation
+        url: https://github.com/blockworks-foundation/mango-feeds/blob/lou/l3-feed/service-mango-orderbook/README.md
+      - type: AsyncAPI
+        url: asyncapi/mango-markets-feeds-asyncapi.yml
+      - type: SourceCode
+        title: service-mango-orderbook (Rust)
+        url: https://github.com/blockworks-foundation/mango-feeds/tree/lou/l3-feed/service-mango-orderbook
+      - type: SDKs
+        title: '@blockworks-foundation/mango-feeds-client (TypeScript)'
+        url: https://github.com/blockworks-foundation/mango-feeds/tree/main/ts/client
+      - type: PublicAPI
+        title: Public Orderbook API entrypoint
+        url: https://api.mngo.cloud/orderbook/v1/
+common:
+  - type: IssueTracker
+    url: https://github.com/blockworks-foundation/mango-feeds/issues
+  - type: License
+    name: AGPL-3.0
+    url: https://github.com/blockworks-foundation/mango-feeds/blob/main/LICENSE
+  - type: Website
+    url: https://mango.markets
+  - type: Documentation
+    url: https://docs.mango.markets
+  - type: GitHubOrganization
+    url: https://github.com/blockworks-foundation
+  - type: SourceCode
+    title: mango-feeds
+    url: https://github.com/blockworks-foundation/mango-feeds
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com
