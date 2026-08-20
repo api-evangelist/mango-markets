@@ -32,6 +32,19 @@ tags:
   - Perpetual Futures
   - Spot
   - Margin
+  - Order Book
+  - Fills
+  - Market Data
+  - WebSocket
+  - Solana
+  - Mango v4
+tags_raw:
+  - Cryptocurrency
+  - DeFi
+  - Decentralized Exchange
+  - Perpetual Futures
+  - Spot
+  - Margin
   - Orderbook
   - Fills
   - Market Data
@@ -91,6 +104,15 @@ apis:
     humanURL: https://github.com/blockworks-foundation/mango-feeds/tree/lou/l3-feed/service-mango-orderbook
     baseURL: wss://orderbook.mngo.cloud
     tags:
+      - WebSocket
+      - Order Book
+      - L2
+      - L3
+      - Market Data
+      - Perpetuals
+      - Spot
+      - Solana
+    tags_raw:
       - WebSocket
       - Orderbook
       - L2
