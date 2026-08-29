@@ -13,6 +13,18 @@ description: >-
   Orderbook Feed (service-mango-orderbook, orderbook.mngo.cloud) - which
   stream fill events and L2/L3 orderbook state for Mango V4 Perp markets and
   Openbook spot markets over WebSocket.
+deliveryModel:
+  model: self-hosted
+  license: AGPL-3.0
+  open_source: true
+  commercial: false
+  callable_host: false
+  label: Self-hosted open source · you run it yourself
+  confidence: high
+  source:
+  - license
+  generated: '2026-08-28'
+  method: derived
 accessModel:
   pricing: unknown
   onboarding: unknown
