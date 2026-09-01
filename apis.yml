@@ -44,7 +44,7 @@ tags:
   - Perpetual Futures
   - Spot
   - Margin
-  - Orderbook
+  - Order Book
   - Fills
   - Market Data
   - WebSocket
@@ -117,7 +117,7 @@ apis:
     baseURL: wss://orderbook.mngo.cloud
     tags:
       - WebSocket
-      - Orderbook
+      - Order Book
       - L2
       - L3
       - Market Data
