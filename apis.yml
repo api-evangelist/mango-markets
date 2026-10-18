@@ -118,7 +118,7 @@ apis:
     tags:
       - WebSocket
       - Order Book
-      - L2
+      - Layer 2
       - L3
       - Market Data
       - Perpetuals
