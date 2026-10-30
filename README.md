@@ -1,4 +1,4 @@
-# Mango Markets (mango-markets)
+# Mango Markets
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -66,88 +66,97 @@
 
 Mango Markets is a decentralized derivatives exchange and money market built on Solana, operated by the Blockworks Foundation. Mango v4 introduces unified margin accounts that combine spot trading, perpetual futures, and borrow/lend in a single risk engine, settled by the on-chain Mango v4 program. Beyond the on-chain program and the TypeScript client, the project exposes low-latency public market-data feeds through the mango-feeds geyser services - the Fills Feed (service-mango-fills, fills.mngo.cloud) and the Orderbook Feed (service-mango-orderbook, orderbook.mngo.cloud) - which stream fill events and L2/L3 orderbook state for Mango V4 Perp markets and Openbook spot markets over WebSocket.
 
-**APIs.json:** [https://raw.githubusercontent.com/api-evangelist/mango-markets/refs/heads/main/apis.yml](https://raw.githubusercontent.com/api-evangelist/mango-markets/refs/heads/main/apis.yml)
+**Areas:** Cryptocurrency · DeFi · Decentralized Exchange · Perpetual Futures · Spot · Margin · Order Book · Fills · Market Data · WebSocket · Solana · Mango v4
 
-## Tags
+## Mango Markets on APIs.io
 
-- Cryptocurrency
-- DeFi
-- Decentralized Exchange
-- Perpetual Futures
-- Spot
-- Margin
-- Orderbook
-- Fills
-- Market Data
-- WebSocket
-- Solana
-- Mango v4
+Everything profiled for Mango Markets is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/mango-markets/](https://apis.io/providers/mango-markets/)** — or go straight to one of the APIs or properties below.
 
-## Timestamps
+### APIs (2)
 
-- **Created:** 2026-05-30
-- **Modified:** 2026-05-30
+- [Mango v4 Fills Feed](https://apis.io/apis/mango-markets/fills-feed/) — Low-latency WebSocket feed (service-mango-fills) that parses Mango V4 Perp and Openbook event queues and emits individual fill events as they are processed…
+- [Mango v4 Orderbook Feed](https://apis.io/apis/mango-markets/orderbook-feed/) — Low-latency WebSocket feed (service-mango-orderbook) that parses Mango V4 Perp and Openbook spot bookside accounts and emits L2 (price / quantity) and L3…
 
-## APIs
+### Published properties
 
-### Mango v4 Fills Feed
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
 
-Low-latency WebSocket feed (service-mango-fills) that parses Mango V4 Perp and Openbook event queues and emits individual fill events as they are processed by the validator. Supports getMarkets discovery, subscribe / unsubscribe by marketIds or by Mango account, and an optional headUpdates mode that emits event-queue head pointer updates. Fill events that occurred on a fork are revoked via a status='revoke' message.
+#### AsyncAPI (1)
 
-- **Human URL:** [https://github.com/blockworks-foundation/mango-feeds/tree/lou/l3-feed/service-mango-fills](https://github.com/blockworks-foundation/mango-feeds/tree/lou/l3-feed/service-mango-fills)
-- **Base URL:** `wss://fills.mngo.cloud`
+Event-driven and webhook contracts.
 
-#### Tags
+- [Mango Markets v4 Feeds API](https://apis.io/asyncapis/mango-markets/mango-markets-feeds-asyncapi/)
 
-- WebSocket
-- Fills
-- Market Data
-- Perpetuals
-- Spot
-- Solana
+#### Event channels (2)
 
-#### Properties
+Individual events and webhooks the provider emits.
 
-- [Documentation](https://github.com/blockworks-foundation/mango-feeds/blob/lou/l3-feed/service-mango-fills/README.md)
-- [AsyncAPI](asyncapi/mango-markets-feeds-asyncapi.yml) — [AsyncAPI Specification](https://www.asyncapi.com/docs/reference/specification/latest)
-- [Source Code](https://github.com/blockworks-foundation/mango-feeds/tree/lou/l3-feed/service-mango-fills)
-- [SDK](https://github.com/blockworks-foundation/mango-feeds/tree/main/ts/client)
-- [Public A P I](https://api.mngo.cloud/fills/v1/)
+- [/fills](https://apis.io/channels/mango-markets/fills/)
+- [/orderbook](https://apis.io/channels/mango-markets/orderbook/)
 
-### Mango v4 Orderbook Feed
+#### Governance rules (1)
 
-Low-latency WebSocket feed (service-mango-orderbook) that parses Mango V4 Perp and Openbook spot bookside accounts and emits L2 (price / quantity) and L3 (per-order) checkpoints and per-side delta updates. Clients subscribe with subscriptionType=level for L2 or subscriptionType=book for L3; the server returns an initial checkpoint followed by streaming per-side updates with slot and writeVersion for ordering.
+Spectral rulesets for the provider's contracts.
 
-- **Human URL:** [https://github.com/blockworks-foundation/mango-feeds/tree/lou/l3-feed/service-mango-orderbook](https://github.com/blockworks-foundation/mango-feeds/tree/lou/l3-feed/service-mango-orderbook)
-- **Base URL:** `wss://orderbook.mngo.cloud`
+- [Mango Markets — asyncapi rules](https://apis.io/rules/mango-markets/mango-markets-asyncapi-spectral-rules/)
 
-#### Tags
+## Where to find this API
 
-- WebSocket
-- Orderbook
-- L2
-- L3
-- Market Data
-- Perpetuals
-- Spot
-- Solana
-
-#### Properties
-
-- [Documentation](https://github.com/blockworks-foundation/mango-feeds/blob/lou/l3-feed/service-mango-orderbook/README.md)
-- [AsyncAPI](asyncapi/mango-markets-feeds-asyncapi.yml) — [AsyncAPI Specification](https://www.asyncapi.com/docs/reference/specification/latest)
-- [Source Code](https://github.com/blockworks-foundation/mango-feeds/tree/lou/l3-feed/service-mango-orderbook)
-- [SDK](https://github.com/blockworks-foundation/mango-feeds/tree/main/ts/client)
-- [Public A P I](https://api.mngo.cloud/orderbook/v1/)
-
-## Common Properties
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
 
 - [Website](https://mango.markets)
 - [Documentation](https://docs.mango.markets)
-- [GitHub Organization](https://github.com/blockworks-foundation)
-- [Source Code](https://github.com/blockworks-foundation/mango-feeds)
+- [GitHub](https://github.com/blockworks-foundation)
 
-## Maintainers
+## API Evangelist rating
 
-**FN:** Kin Lane
-**Email:** kin@apievangelist.com
+**Kin Score 17.7** — emerging · rubric 0.24.0 · scored 2026-10-17
+
+| Facet | Score |
+|---|---|
+| Discoverability | 66.1 |
+| Contract quality | 35.4 |
+| Contract governance | 13.6 |
+| Operational transparency | 2.6 |
+| Developer ergonomics | 16.7 |
+| Access clarity | 0.0 |
+
+**Agent readiness 14.0** — agent-aware
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | — |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | — |
+| Idempotency | — |
+| Error Semantics | — |
+| OpenAPI Examples | — |
+| Rate Limit Signal | — |
+| Event Surface Described | derived (partial credit) |
+| Agent Skills | — |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+
+**Regulatory alignment 0.0** — Securities & Market Data
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/mango-markets/](https://apis.io/providers/mango-markets/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Mango Markets: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/mango-markets/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
